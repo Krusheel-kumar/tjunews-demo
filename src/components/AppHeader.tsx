@@ -9,6 +9,7 @@ interface AppHeaderProps {
   language: 'English' | 'Telugu';
   onToggleLanguage: () => void;
   onOpenAIAssistant: () => void;
+  onScrollToTop?: () => void;
 }
 
 export const AppHeader: React.FC<AppHeaderProps> = ({
@@ -17,14 +18,21 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
   unreadCount = 2,
   language,
   onToggleLanguage,
-  onOpenAIAssistant
+  onOpenAIAssistant,
+  onScrollToTop
 }) => {
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-xl border-b border-gray-150/80 px-3 sm:px-4 h-[52px] flex items-center justify-between shadow-[0_2px_10px_rgba(0,0,0,0.03)] transition-all">
       {/* Brand Identity with Live Edition Tag */}
       <div className="flex items-center gap-2 flex-shrink-0">
         <button
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          onClick={() => {
+            if (onScrollToTop) {
+              onScrollToTop();
+            } else {
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+          }}
           className="flex items-center focus:outline-none cursor-pointer active:opacity-85 transition-opacity"
           aria-label="TJU News Home"
         >

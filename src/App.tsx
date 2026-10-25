@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   INITIAL_ARTICLES,
   INITIAL_SHORTS,
@@ -80,6 +80,9 @@ export function App() {
   const [showCitizenSubmit, setShowCitizenSubmit] = useState(false);
   const [showCitizenDashboard, setShowCitizenDashboard] = useState(false);
 
+  // Scroll Container Ref for inner scrolling viewport
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
   // User Preferences & State
   const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [savedArticleIds, setSavedArticleIds] = useState<string[]>([
@@ -107,6 +110,11 @@ export function App() {
     setShareToast(`Link copied: "${title.slice(0, 30)}..."`);
     setTimeout(() => setShareToast(null), 3000);
   };
+
+  // Ensure inner scroll container starts at top when switching tabs or screens
+  useEffect(() => {
+    scrollContainerRef.current?.scrollTo({ top: 0, behavior: 'auto' });
+  }, [currentTab, selectedArticle, selectedJob, showEducationJobs, showSearch, showNotifications]);
 
   const handleToggleBookmark = (id: string) => {
     if (savedArticleIds.includes(id)) {
@@ -211,9 +219,15 @@ export function App() {
   const unreadNotifCount = notifications.filter((n) => !n.read).length;
 
   return (
-    <div className="min-h-screen bg-[#07090E] text-gray-900 font-sans flex flex-col items-center justify-center py-0 sm:py-6 relative overflow-x-hidden">
+    <div
+      className={`min-h-screen ${
+        viewMode === 'cms'
+          ? 'bg-[#0F1117] min-h-screen overflow-y-auto'
+          : 'bg-[#07090E] h-[100dvh] h-screen sm:h-auto sm:min-h-screen overflow-hidden sm:overflow-x-hidden'
+      } text-gray-900 font-sans flex flex-col items-center justify-center py-0 sm:py-6 relative`}
+    >
       {/* Desktop Mode Switcher Bar */}
-      <div className="hidden sm:flex items-center gap-3 mb-4 z-40 bg-white/10 backdrop-blur-xl border border-white/15 px-3 py-1.5 rounded-full shadow-2xl">
+      <div className="hidden sm:flex items-center gap-3 mb-4 z-40 bg-white/10 backdrop-blur-xl border border-white/15 px-3.5 py-1.5 rounded-full shadow-2xl">
         <button
           onClick={() => setViewMode('mobile')}
           className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
@@ -265,8 +279,12 @@ export function App() {
           />
         </div>
       ) : (
-        /* Mobile Simulator Frame (Flagship 393 x 852 px styling) */
-        <div className={`w-full max-w-[420px] ${showSplash ? 'bg-[#99131A]' : 'bg-white'} min-h-screen sm:min-h-[852px] sm:h-[870px] sm:max-h-[94vh] sm:rounded-[52px] shadow-[0_30px_90px_rgba(0,0,0,0.9)] border-0 sm:border-[12px] sm:border-[#181B22] flex flex-col overflow-hidden relative ring-1 ring-white/15 transition-all duration-300`}>
+        /* Mobile Simulator Frame (Flagship 393 x 852 px styling on desktop, full-screen viewport on mobile) */
+        <div
+          className={`w-full sm:max-w-[420px] ${
+            showSplash ? 'bg-[#99131A]' : 'bg-white'
+          } h-[100dvh] h-screen sm:min-h-[852px] sm:h-[870px] sm:max-h-[94vh] rounded-none sm:rounded-[52px] shadow-none sm:shadow-[0_30px_90px_rgba(0,0,0,0.9)] border-0 sm:border-[12px] sm:border-[#181B22] flex flex-col overflow-hidden relative ring-0 sm:ring-1 sm:ring-white/15 transition-all duration-300`}
+        >
           {/* Simulated Mobile Status Bar (Visible on desktop frame) */}
           <div className={`hidden sm:flex ${showSplash ? 'bg-[#99131A] text-white border-transparent' : 'bg-white text-gray-900 border-gray-100'} px-7 pt-3 pb-1.5 justify-between items-center text-[12px] font-bold select-none border-b z-50 transition-colors duration-300`}>
             <span className="font-bold tracking-tight">9:41</span>
@@ -291,8 +309,11 @@ export function App() {
           </div>
 
           {/* Mobile Screen Container */}
-          <div className="flex-1 flex flex-col overflow-hidden relative">
-            <div className={`flex-1 overflow-y-auto relative scrollbar-none flex flex-col ${showSplash ? 'bg-[#C9252D]' : 'bg-white'}`}>
+          <div className="flex-1 flex flex-col overflow-hidden relative min-h-0 w-full">
+            <div
+              ref={scrollContainerRef}
+              className={`flex-1 overflow-y-auto relative scrollbar-none flex flex-col min-h-0 ${showSplash ? 'bg-[#C9252D]' : 'bg-white'}`}
+            >
               {showSplash ? (
                 <SplashScreen onFinish={() => setShowSplash(false)} />
             ) : selectedJob ? (
@@ -396,6 +417,7 @@ export function App() {
                     language={language}
                     onToggleLanguage={() => setLanguage(language === 'English' ? 'Telugu' : 'English')}
                     onOpenAIAssistant={() => setShowAIAssistant(true)}
+                    onScrollToTop={() => scrollContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' })}
                   />
                 )}
 
@@ -494,7 +516,10 @@ export function App() {
               !showCitizenDashboard && (
                 <BottomNavigation
                   currentTab={currentTab}
-                  onTabChange={(tab) => setCurrentTab(tab)}
+                  onTabChange={(tab) => {
+                    setCurrentTab(tab);
+                    scrollContainerRef.current?.scrollTo({ top: 0, behavior: 'auto' });
+                  }}
                   unreadCount={unreadNotifCount}
                   language={language}
                 />

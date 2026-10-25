@@ -30,7 +30,8 @@ export const BottomNavigation: React.FC<BottomNavProps> = ({
       style={{
         backgroundColor: '#FFFFFF',
         borderTop: '1px solid #E5E7EB',
-        boxShadow: '0 -4px 16px rgba(0, 0, 0, 0.06)'
+        boxShadow: '0 -4px 16px rgba(0, 0, 0, 0.06)',
+        paddingBottom: 'max(0px, env(safe-area-inset-bottom, 0px))'
       }}
     >
       <div className="flex items-center justify-around px-2 pt-2 pb-1">
