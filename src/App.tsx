@@ -220,11 +220,11 @@ export function App() {
 
   return (
     <div
-      className={`min-h-screen ${
+      className={`${
         viewMode === 'cms'
-          ? 'bg-[#0F1117] min-h-screen overflow-y-auto'
-          : 'bg-[#07090E] h-[100dvh] h-screen sm:h-auto sm:min-h-screen overflow-hidden sm:overflow-x-hidden'
-      } text-gray-900 font-sans flex flex-col items-center justify-center py-0 sm:py-6 relative`}
+          ? 'min-h-screen bg-[#0F1117] overflow-y-auto text-gray-900 font-sans flex flex-col items-center justify-center py-0 sm:py-6 relative'
+          : 'fixed sm:relative inset-0 sm:inset-auto w-full h-full sm:min-h-screen bg-[#07090E] text-gray-900 font-sans flex flex-col items-center justify-center sm:py-6 overflow-hidden sm:overflow-x-hidden'
+      }`}
     >
       {/* Desktop Mode Switcher Bar */}
       <div className="hidden sm:flex items-center gap-3 mb-4 z-40 bg-white/10 backdrop-blur-xl border border-white/15 px-3.5 py-1.5 rounded-full shadow-2xl">
@@ -281,9 +281,9 @@ export function App() {
       ) : (
         /* Mobile Simulator Frame (Flagship 393 x 852 px styling on desktop, full-screen viewport on mobile) */
         <div
-          className={`w-full sm:max-w-[420px] ${
+          className={`w-full h-full sm:max-w-[420px] ${
             showSplash ? 'bg-[#99131A]' : 'bg-white'
-          } h-[100dvh] h-screen sm:min-h-[852px] sm:h-[870px] sm:max-h-[94vh] rounded-none sm:rounded-[52px] shadow-none sm:shadow-[0_30px_90px_rgba(0,0,0,0.9)] border-0 sm:border-[12px] sm:border-[#181B22] flex flex-col overflow-hidden relative ring-0 sm:ring-1 sm:ring-white/15 transition-all duration-300`}
+          } sm:h-[870px] sm:min-h-[852px] sm:max-h-[94vh] rounded-none sm:rounded-[52px] shadow-none sm:shadow-[0_30px_90px_rgba(0,0,0,0.9)] border-0 sm:border-[12px] sm:border-[#181B22] flex flex-col overflow-hidden relative ring-0 sm:ring-1 sm:ring-white/15 transition-all duration-300`}
         >
           {/* Simulated Mobile Status Bar (Visible on desktop frame) */}
           <div className={`hidden sm:flex ${showSplash ? 'bg-[#99131A] text-white border-transparent' : 'bg-white text-gray-900 border-gray-100'} px-7 pt-3 pb-1.5 justify-between items-center text-[12px] font-bold select-none border-b z-50 transition-colors duration-300`}>
